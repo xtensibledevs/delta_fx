@@ -65,7 +65,3 @@ This project is licensed under the [MIT License](LICENSE).
 ## About Xtensible Devs
 
 Delta Functions is proudly developed and maintained by Xtensible Devs. Learn more about us at [https://xtensibledevs.com](https://xtensibledevs.com).
-
----
-
-Feel free to customize the README to include specific details about Delta Functions and your development environment. Ensure that you replace placeholder URLs and instructions with actual information relevant to your project.
