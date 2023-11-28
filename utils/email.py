@@ -1,48 +1,63 @@
+from __future__ import absolute_import, unicode_literals
+
 import os
-from flask import url_for, render_template
 import smtplib
 import ssl
+from celery import Celery, current_app
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from utils.sec import generate_confirmation_token
 
 
+# Celery config
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BACKEND_URL = 'redis://localhost:6379/0'
+
+mail_server_config = {}
+mail_server_config['MAIL_SERVER'] = os.environ.get('SMTP_SERVER')
+mail_server_config['MAIL_PORT'] = os.environ.get('SMTP_PORT', '587')
+mail_server_config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+mail_server_config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+mail_server_config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_SENDER')
+
+
+# Initialize extensions
+app = Celery(__name__, broker=CELERY_BROKER_URL, backend=CELERY_BACKEND_URL, include=['tasks'])
+app.conf.update(mail_server_config)
+
+@app.task
 def send_email(recv_email, sub, plaintext, html):
-    SMTP_SERVER = os.environ.get('SMTP_SERVER')
-    PORT = os.environ.get('EMAIL_PORT')
-    SENDER_EMAIL = os.environ.get('SENDER_EMAIL')
-    PASSWORD = os.environ.get('EMAIL_PASSWORD')
+    mail_server_config = current_app.conf.mail_server_config
+    with smtplib.SMTP(mail_server_config.get('MAIL_SERVER'), mail_server_config.get('MAIL_PORT')) as mail_server:
+        message = MIMEMultipart('alternative')
+        message["Subject"] = sub
+        message["From"] = mail_server_config.get('MAIL_DEFAULT_SENDER')
+        message["To"] = recv_email
 
-    message = MIMEMultipart('alternative')
-    message["Subject"] = sub
-    message["From"] = SENDER_EMAIL
-    message["To"] = recv_email
+        part1 = MIMEText(plaintext, "plain")
+        part2 = MIMEText(html, "html")
 
-    part1 = MIMEText(plaintext, "plain")
-    part2 = MIMEText(html, "html")
+        message.attach(part1)
+        message.attach(part2)
 
-    message.attach(part1)
-    message.attach(part2)
+        context = ssl.create_default_context()
 
-    context = ssl.create_default_context()
-
-    # Try to login to the server and send email
-    try:
-        server = smtplib.SMTP(SMTP_SERVER, PORT)
-        server.ehlo()
-        server.starttls(context=context)
-        server.ehlo()
-        server.login(SENDER_EMAIL, PASSWORD)
-        server.send_message(message)
-    except Exception as ex:
-        print(ex)
-        return False
-    finally:
-        server.quit()
-        return True
+        # Try to login to the server and send email
+        try:
+            mail_server.ehlo()
+            mail_server.starttls(context=context)
+            mail_server.ehlo()
+            mail_server.login(
+                mail_server_config.get('MAIL_USERNAME'),
+                mail_server_config.get('MAIL_PASSWORD')
+            )
+            mail_server.send_message(message)
+        except Exception as ex:
+            print(ex)
+            return False
     
-
+@app.task
 def send_registration_email(user):
     token = generate_confirmation_token(user.email)
     confirm_url = url_for('confirm_email', token=token, _external=True)
