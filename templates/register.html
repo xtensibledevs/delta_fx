@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
+    <meta name="description" content="Host your backend code with ease with Delta Functions">
+    <meta name="author" content="packluke">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delta Functions</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.1/css/all.css"
+        integrity="sha384-9ZfPnbegQSumzaE7mks2IYgHoayLtuto3AS6ieArECeaR8nCfliJVuLh/GaQ1gyM" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="bg-gray-100 min-h-screen">
+        <nav class="bg-blue-700 p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <!-- Brand/logo -->
+                <a href="#" class="text-white text-xl">
+                    <i class="fas fa-triangle"></i>
+                    Delta Functions | Xtensible Devs
+                </a>
+
+                <div>
+                    <ul class="flex space-x-4">
+                        <li><a href="#"
+                                class="p-2 rounded text-white font-semibold hover:bg-blue-900 transition-colors">Home</a>
+                        </li>
+                        <li><a href="#"
+                                class="p-2 rounded text-white font-semibold hover:bg-blue-900 transition-colors">About</a>
+                        </li>
+                        <li><a href="#"
+                                class="p-2 rounded text-white font-semibold hover:bg-blue-900 transition-colors">Contact</a>
+                        </li>
+                        <li><a href="#"
+                                class="ml-8 p-2 rounded text-black font-semibold bg-white hover:bg-opacity-75 transition-colors">Login</a>
+                        </li>
+                        <li><a href="#"
+                                class="p-2 rounded text-black font-semibold bg-white hover:bg-opacity-75 transition-colors">Register</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="flex flex-col items-center h-screen my-auto justify-center -mt-16">
+            <div class="bg-white p-8 rounded shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Register</h2>
+                <form action="{{ url_for('auth_login') }}" method="post">
+                    <div class="mb-4">
+                        <label for="username" class="block text-sm font-medium text-gray-600">Username</label>
+                        <input type="text" id="username" name="username" class="mt-1 p-2 border w-full rounded"
+                            required>
+                    </div>
+                    <div class="mb-4 flex space-x-2">
+                        <div class="w-full">
+                            <label for="first_name" class="block text-sm font-medium text-gray-600">First Name</label>
+                            <input type="text" id="first_anme" name="first_name" class="mt-1 p-2 border w-full rounded"
+                                required autocomplete="name">
+                        </div>
+                        <div class="w-full">
+                            <label for="last_name" class="block text-sm font-medium text-gray-600">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" class="mt-1 p-2 border w-full rounded"
+                                required autocomplete="family-name">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-600">Email</label>
+                        <input type="text" id="email" name="email" class="mt-1 p-2 border w-full rounded" required
+                            autocomplete="email">
+                    </div>
+                    <div class="mb-8">
+                        <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
+                        <input type="password" id="pass" name="pass" class="mt-1 p-2 border w-full rounded" required>
+                    </div>
+                    <button type="submit"
+                        class="bg-blue-700 text-white p-2 rounded hover:bg-blue-900 transition-colors w-full">Register</button>
+                </form>
+
+                <!-- {% if error == "1" %} -->
+                <p class="p-2 rounded text-red-600 bg-red-300 mt-4 text-center font-semibold">Account already exists
+                    with the same email</p>
+                <!-- {% endif %} -->
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
