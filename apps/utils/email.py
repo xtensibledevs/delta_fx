@@ -57,13 +57,3 @@ def send_email(recv_email, sub, plaintext, html):
             print(ex)
             return False
     
-@app.task
-def send_registration_email(user):
-    token = generate_confirmation_token(user.email)
-    confirm_url = url_for('confirm_email', token=token, _external=True)
-    subject = "Registration successful - Please verify your email address."
-    plaintext = f"Welcome {user.display_name()}.\nPlease verify your email address by following this link:\n\n{confirm_url}"
-    html = render_template('verification_email.html',confirm_url=confirm_url, user=user)
-    send_email(user.email, subject, plaintext, html)
-
-    
